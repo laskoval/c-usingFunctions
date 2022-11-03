@@ -1,0 +1,120 @@
+
+//This program will input the  name of the restaurant and 4 ratings: taste, service, menu and value
+//And will calculate the lowest rating, the total rating and the grade of each restaurant
+
+//Input (from file "rest.txt") 
+//Restaurant name
+//Taste rating
+//Service rating
+//Menu rating
+//Value rating
+
+//Output will be displayed on a screen  : 
+//Name of the restaurant and 4 ratings: taste, service, menu and value
+//The Lowest, the total and the grade of each restaurant
+
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+using namespace std;
+
+//declare 4 function 
+int lowest(int pRating1, int pRating2); //to find the lowest
+int total(int pTaste, int pService, int pMenu, int pValue,int pLowest);   // to calculate the total
+char grade(int pTotal, int pTaste);  // to evaluate a grade
+void display(string pRestaurant, int pTaste, int pService, int pMenu, int pValue, int pLowest, int pTotal, char pGrade); // to display results
+
+int main()
+{
+	string restaurantName;  //declare restaurant name
+	//declare 4 ratings for taste, service, menu and value
+	int taste;
+	int service;
+	int menu;
+	int value;
+
+	int lowestValue;  //declare the lowest value
+	int eachTotal;    //declare the total value
+	char eachGrade;   // declare the grade
+
+	//Declare file stream variable
+	fstream inputFile;
+
+	//Open the file
+	inputFile.open("rest.txt");
+
+	//Check the file
+	if (!inputFile) {
+		cout << endl << "Failed to open file " << "rest.txt";
+		return 1;
+	}
+
+	// Use while loop to read data while there is data in an input file
+	while (inputFile.peek() != EOF) {
+
+		//read the data
+		inputFile >> restaurantName;
+		inputFile >> taste;
+		inputFile >> service;
+		inputFile >> menu;
+		inputFile >> value;
+
+	
+		lowestValue = lowest(lowest(taste, service),lowest(menu, value)); // assign the lowest value calling a function, with 2 parameters each time calling a function
+
+		eachTotal = total(taste, service, menu, value, lowestValue);  //assign the total value calling a function with 4 parameters
+	
+		eachGrade = grade(eachTotal, taste);  //assign the grade calling a function with 2 parameters
+	
+		display(restaurantName, taste, service, menu, value, lowestValue, eachTotal, eachGrade);// call a function to display output with 8 parameters
+	}
+	inputFile.close();  //close a file
+	return 0;
+} 
+//write a function to find the lowest value taking 2 parameters
+int lowest(int pRating1, int pRating2) {
+	int lowest; //declare the lowest value
+	if (pRating1 > pRating2) //Use a conditional statement to evaluate which value is lower 
+		lowest = pRating2; //and assign this value to the lowest 
+	else
+		lowest = pRating1;
+
+	return lowest; //return the lowest value
+}
+//write a function with 5 parameters: taste, service, menu, value and the lowest value to calculate the total without the lowest rating
+int total(int pTaste, int pService, int pMenu, int pValue, int pLowest) {
+	int total; //declare the total
+	total = (pTaste + pService + pMenu + pValue) - pLowest; //sum 4 ratings and subract the lowest to calculate the total
+	return total; //return the total without the lowest rating
+}
+
+//write a function to evaluate a grade with 2 parameters:total, taste
+char grade(int pTotal, int pTaste) {
+	char grade; //declare a grade that will display a letter
+	// use a statement if/else to determine the grade
+	if (pTotal >= 26 and pTaste >= 8) 
+		grade = 'A';
+	else if (pTotal >= 22)
+		grade = 'B';
+	else if (pTotal >= 17)
+		grade = 'C';
+	else 
+		grade = 'D';
+	return grade; //return the grade of the restaurant
+
+}
+
+//write a function to display the output with 8 parameters: restaurant name, taste, service, menu and value, 
+//lowest mark, total and restaurant grade
+void display(string pRestaurant, int pTaste, int pService, int pMenu, int pValue, int pLowest, int pTotal, char pGrade)  
+{
+	cout <<"Restaurant Name:  " << pRestaurant << fixed << endl;
+	cout << setw(10) << setfill(' ') << endl;
+	cout << "Ratings:  " << "Taste= " 
+		<< pTaste << "    " << "Service= " << pService << "    " << "Menu= " << pMenu << "    " << "Value= " << pValue << endl;
+	cout << setw(10) << setfill(' ') << endl;
+	cout << "Lowest Rating: " << pLowest << endl;
+	cout << "Total Rating: " << pTotal << endl;
+	cout << "Restaurant Grade: " << pGrade << endl;
+	cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
+}
